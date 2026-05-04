@@ -1020,6 +1020,7 @@
 
 <script>
 /* ═══ STARS ═══ */
+/* ═══ STARS ═══ */
 (function(){
   const c = document.getElementById('stars-canvas');
   const ctx = c.getContext('2d');
@@ -1048,7 +1049,7 @@
   window.addEventListener('resize',()=>{ resize(); init(); });
 })();
 
-/* ═══ AUDIO (sin loop, para cuando termina) ═══ */
+/* ═══ AUDIO ═══ */
 const audio   = document.getElementById('bg-audio');
 const playBtn = document.getElementById('play-btn');
 const lbl     = document.getElementById('audio-label');
@@ -1103,7 +1104,6 @@ function spawnHearts(id,n=10){
    PPM GAME ENGINE
 ═══════════════════════════════════════════ */
 
-// ── TEXTS ──
 const TEXTS = {
   frases: [
     "El sol sale cada manana y pinta el cielo de naranja antes de que el mundo despierte por completo.",
@@ -1168,9 +1168,14 @@ const TEXTS = {
 };
 
 // ── JSONBIN CONFIG ──
-const BIN_ID        = '69f915e9aaba8821976f8e8b';
-const MASTER_KEY    = '$2a$10$geiRTLxbhDv1dzGC6Dd.TuKRADid09RccDywbbB4N9wapfobgBBGC';
-const ACCESS_KEY    = '$2a$10$G.9yKAPw5idmytjVlK04QudAQrCf2t5JYDi6mHOqImSkm8GHz2/ZC'; // X-Access-Key
+// INSTRUCCIONES: Crea una cuenta gratis en https://jsonbin.io
+// Luego crea un bin con este contenido inicial: {"scores":[],"record":0,"games":0,"maxAcc":0}
+// Copia tu BIN_ID y tu X-Master-Key aquí abajo:
+const BIN_ID     = '69f915e9aaba8821976f8e8b';   // ← tu bin id
+const MASTER_KEY = '$2a$10$geiRTLxbhDv1dzGC6Dd.TuKRADid09RccDywbbB4N9wapfobgBBGC'; // ← tu master key
+
+// ── LOCAL STORAGE KEY ──
+const LS_KEY = 'ppm_mili_data';
 
 // ── STATE ──
 let currentMode   = 'frases';
@@ -1208,9 +1213,7 @@ function setDiff(secs, btn) {
 }
 
 function handleAction() {
-  if (!started || finished) {
-    startGame();
-  }
+  if (!started || finished) startGame();
 }
 
 function changeTextSameMode() {
@@ -1254,7 +1257,7 @@ function startGame() {
   $('prog-bar').style.width = '0%';
 }
 
-// ── RESET (no start) ──
+// ── RESET ──
 function resetGame(forceNewText) {
   clearInterval(timerInterval);
   started   = false;
@@ -1285,15 +1288,13 @@ $('type-input').addEventListener('input', function(e) {
     startTimer();
   }
 
-  const typed = this.value;
+  const typed    = this.value;
   const expected = currentText[charIndex];
-
   if (typed === '') return;
 
   const lastChar = typed[typed.length - 1];
 
   if (lastChar === expected) {
-    // correct
     const span = $('c' + charIndex);
     if (span) span.className = 'char done';
     this.classList.remove('error');
@@ -1302,25 +1303,20 @@ $('type-input').addEventListener('input', function(e) {
     if (next) next.className = 'char current';
     this.value = '';
 
-    // progress
     const pct = Math.round((charIndex / currentText.length) * 100);
     $('prog-bar').style.width = pct + '%';
 
     if (charIndex >= currentText.length) {
-      // all done early — load new text seamlessly
-      const oldText = currentText;
       currentText = getRandText(currentMode);
       charIndex   = 0;
       buildDisplay(currentText);
       $('c0').className = 'char current';
     }
   } else {
-    // wrong
     const span = $('c' + charIndex);
     if (span) span.className = 'char wrong';
     this.classList.add('error');
     totalErrors++;
-    // brief shake
     setTimeout(() => {
       this.classList.remove('error');
       if (span) span.className = 'char current';
@@ -1329,9 +1325,8 @@ $('type-input').addEventListener('input', function(e) {
   }
 });
 
-// backspace support via keydown
 $('type-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { resetGame(); }
+  if (e.key === 'Escape') resetGame();
 });
 
 // ── TIMER ──
@@ -1357,22 +1352,19 @@ function endGame() {
   $('type-input').disabled = true;
   $('action-btn').textContent = '🔄 Jugar de nuevo';
 
-  const elapsed   = currentDiff; // seconds used
+  const elapsed   = currentDiff;
   const typedOk   = charIndex;
-  // count words typed
   const fullSoFar = currentText.substring(0, charIndex);
   const wordCount = fullSoFar.trim().split(/\s+/).filter(w => w.length > 0).length;
   const wpm       = Math.round((typedOk / 5) / (elapsed / 60));
   const totalChars = typedOk + totalErrors;
   const acc       = totalChars > 0 ? Math.round((typedOk / totalChars) * 100) : 0;
 
-  // update display
   $('r-wpm').textContent   = wpm;
   $('r-acc').textContent   = acc + '%';
   $('r-words').textContent = wordCount;
   $('r-errs').textContent  = totalErrors;
 
-  // check record
   const isRecord = wpm > localData.record;
   if (isRecord) {
     localData.record = wpm;
@@ -1384,7 +1376,6 @@ function endGame() {
   if (acc > localData.maxAcc) localData.maxAcc = acc;
   localData.games++;
 
-  // add score entry
   const entry = {
     wpm, acc, words: wordCount, errors: totalErrors,
     mode: currentMode, diff: currentDiff,
@@ -1394,7 +1385,6 @@ function endGame() {
   localData.scores.unshift(entry);
   if (localData.scores.length > 50) localData.scores = localData.scores.slice(0, 50);
 
-  // result message
   let msg = '';
   if (wpm >= 100) msg = '¡Eres una máquina! 🤖 Mis dedos lloran de envidia.';
   else if (wpm >= 80) msg = '¡Increíble velocidad, Belén! 🔥 Estás en el top.';
@@ -1410,7 +1400,7 @@ function endGame() {
   $('result-panel').classList.add('show');
 
   updateStatsUI();
-  saveToGist();
+  saveData();          // ← guarda local + intenta jsonbin
   renderLeaderboard();
 }
 
@@ -1429,15 +1419,14 @@ function renderLeaderboard() {
     list.innerHTML = '<p style="text-align:center;color:rgba(192,132,252,0.3);font-size:0.95rem;padding:12px">Aún no hay marcas. ¡Empieza a jugar!</p>';
     return;
   }
-  // sort by wpm desc
   const sorted = [...localData.scores].sort((a,b) => b.wpm - a.wpm).slice(0, 10);
   const medals = ['🥇','🥈','🥉'];
   const posClasses = ['gold','silver','bronze'];
+  const modeLabels = { frases:'💬 Frases', palabras:'📝 Palabras', codigo:'💻 Código', emociones:'💜 Emociones' };
 
   sorted.forEach((s, i) => {
     const row = document.createElement('div');
     row.className = 'lb-row' + (i === 0 ? ' highlight' : '');
-    const modeLabels = { frases:'💬 Frases', palabras:'📝 Palabras', codigo:'💻 Código', emociones:'💜 Emociones' };
     row.innerHTML = `
       <span class="lb-pos ${posClasses[i]||''}">${medals[i]||('#'+(i+1))}</span>
       <span class="lb-mode">${modeLabels[s.mode]||s.mode} · ${s.diff}s</span>
@@ -1449,59 +1438,112 @@ function renderLeaderboard() {
   });
 }
 
-async function loadFromJsonbin() {
-  setSyncStatus('Cargando récords…', '');
+// ══════════════════════════════════════════
+//  STORAGE: localStorage primero, JSONBin como nube
+// ══════════════════════════════════════════
+
+// Guarda en localStorage (siempre funciona)
+function saveLocal() {
   try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      headers: {
-        'X-Master-Key': MASTER_KEY,
-        'X-Access-Key': ACCESS_KEY
-      }
-    });
-
-    if (!res.ok) throw new Error('No se pudo cargar');
-
-    const data = await res.json();
-    const saved = data.record || data; // jsonbin devuelve { record: {...} }
-
-    localData = {
-      scores: saved.scores || [],
-      record: saved.record || 0,
-      games: saved.games || 0,
-      maxAcc: saved.maxAcc || 0
-    };
-
-    setSyncStatus('✓ Récords cargados 💜', 'ok');
+    localStorage.setItem(LS_KEY, JSON.stringify(localData));
   } catch(e) {
-    console.error(e);
-    setSyncStatus('Modo local (sin conexión)', 'err');
+    console.warn('localStorage no disponible', e);
   }
-  updateStatsUI();
-  renderLeaderboard();
 }
 
+// Carga desde localStorage
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      localData = {
+        scores:  parsed.scores  || [],
+        record:  parsed.record  || 0,
+        games:   parsed.games   || 0,
+        maxAcc:  parsed.maxAcc  || 0
+      };
+      return true;
+    }
+  } catch(e) {
+    console.warn('Error leyendo localStorage', e);
+  }
+  return false;
+}
+
+// Guarda en JSONBin (respaldo en la nube)
 async function saveToJsonbin() {
-  setSyncStatus('Guardando…', '');
+  if (!BIN_ID || !MASTER_KEY || BIN_ID === 'TU_BIN_ID_AQUI') return;
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Master-Key': MASTER_KEY,
-        'X-Access-Key': ACCESS_KEY
+        'X-Master-Key': MASTER_KEY
       },
       body: JSON.stringify(localData)
     });
-
     if (res.ok) {
-      setSyncStatus('✓ Guardado correctamente ⭐', 'ok');
+      setSyncStatus('☁ Guardado en la nube ⭐', 'ok');
     } else {
-      setSyncStatus('Error al guardar', 'err');
+      const err = await res.json().catch(()=>({}));
+      console.warn('JSONBin error:', err);
+      setSyncStatus('⚠ Guardado solo localmente', 'err');
     }
   } catch(e) {
-    console.error(e);
-    setSyncStatus('Sin conexión — guardado local', 'err');
+    console.warn('JSONBin sin conexión:', e);
+    setSyncStatus('💾 Guardado localmente', '');
   }
+}
+
+// Carga desde JSONBin y combina con local
+async function loadFromJsonbin() {
+  if (!BIN_ID || !MASTER_KEY || BIN_ID === 'TU_BIN_ID_AQUI') {
+    setSyncStatus('💾 Modo local activo', '');
+    return;
+  }
+  setSyncStatus('Sincronizando…', '');
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': MASTER_KEY }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const cloud = data.record; // jsonbin envuelve en { record: {...} }
+
+    if (cloud && typeof cloud === 'object') {
+      // Merge: usa el mayor récord entre local y nube
+      const merged = {
+        scores:  mergeScores(localData.scores, cloud.scores || []),
+        record:  Math.max(localData.record || 0, cloud.record || 0),
+        games:   Math.max(localData.games  || 0, cloud.games  || 0),
+        maxAcc:  Math.max(localData.maxAcc || 0, cloud.maxAcc || 0)
+      };
+      localData = merged;
+      saveLocal(); // actualiza local con datos de nube
+    }
+    setSyncStatus('✓ Récords sincronizados 💜', 'ok');
+  } catch(e) {
+    console.warn('JSONBin carga fallida:', e);
+    setSyncStatus('💾 Usando datos locales', '');
+  }
+  updateStatsUI();
+  renderLeaderboard();
+}
+
+// Combina scores locales y de nube, evitando duplicados por timestamp
+function mergeScores(local, cloud) {
+  const map = new Map();
+  [...local, ...cloud].forEach(s => map.set(s.ts, s));
+  return [...map.values()]
+    .sort((a,b) => b.ts - a.ts)
+    .slice(0, 50);
+}
+
+// Guardar: siempre local, intentar nube
+function saveData() {
+  saveLocal();
+  saveToJsonbin();
 }
 
 function setSyncStatus(msg, cls) {
@@ -1510,9 +1552,14 @@ function setSyncStatus(msg, cls) {
   el.className = 'sync-status ' + (cls || '');
 }
 
-// ── INIT (cambia la llamada) ──
+// ── INIT ──
 resetGame();
-loadFromJsonbin();   // ← Cambiado
-</script>
+const hadLocal = loadLocal(); // carga localStorage primero (instantáneo)
+if (hadLocal) {
+  updateStatsUI();
+  renderLeaderboard();
+  setSyncStatus('💾 Datos locales cargados', '');
+}
+loadFromJsonbin(); // luego intenta sincronizar con la nube</script>
 </body>
 </html>
