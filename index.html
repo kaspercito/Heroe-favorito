@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Para Milagros 💜</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black:        #07070f;
+      --deep:         #0d0d1a;
+      --purple-dark:  #160926;
+      --purple-mid:   #3d1166;
+      --purple:       #7b2fff;
+      --purple-light: #c084fc;
+      --purple-glow:  #a855f7;
+      --white:        #f5f0ff;
+      --cream:        #e9d8fd;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+    }
+
+    body {
+      background: var(--black);
+      font-family: 'Caveat', cursive;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    #stars-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── AUDIO BAR ── */
+    #audio-bar {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(13,13,26,0.88);
+      border: 1px solid var(--purple-mid);
+      border-radius: 60px;
+      padding: 10px 20px 10px 12px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 0 24px rgba(123,47,255,0.35), 0 2px 16px rgba(0,0,0,0.5);
+    }
+
+    #play-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--purple);
+      background: var(--purple-dark);
+      color: var(--purple-light);
+      font-size: 15px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    #play-btn:hover { background: var(--purple-mid); box-shadow: 0 0 14px var(--purple); }
+
+    #audio-label { font-size: 15px; color: var(--purple-light); white-space: nowrap; }
+
+    /* ── SECTIONS ── */
+    section {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 48px 24px 90px;
+      z-index: 1;
+    }
+
+    /* ══ INTRO ══ */
+    #intro {
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(90,30,180,0.22) 0%, transparent 65%),
+        var(--black);
+      text-align: center;
+    }
+
+    .intro-tag {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.65rem, 2.5vw, 0.8rem);
+      letter-spacing: 0.35em;
+      color: var(--purple-light);
+      opacity: 0.6;
+      margin-bottom: 14px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .intro-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.2rem, 9vw, 4.5rem);
+      color: var(--white);
+      line-height: 1.1;
+      text-shadow: 0 0 30px rgba(168,85,247,0.5), 0 0 70px rgba(123,47,255,0.25);
+      animation: fadeUp 0.8s ease 0.15s both;
+    }
+
+    .intro-title span { color: var(--purple-light); display: block; }
+
+    .glow-divider {
+      width: 70px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--purple-glow), transparent);
+      margin: 22px auto;
+      border-radius: 2px;
+      animation: fadeUp 0.8s ease 0.3s both;
+    }
+
+    .instruction-card {
+      background: rgba(61,17,102,0.2);
+      border: 1px solid rgba(192,132,252,0.2);
+      border-radius: 24px;
+      padding: 30px 36px;
+      max-width: 440px;
+      backdrop-filter: blur(10px);
+      animation: fadeUp 0.8s ease 0.45s both;
+      position: relative;
+    }
+
+    .instruction-card::before {
+      content: '💜';
+      position: absolute;
+      top: -20px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 34px;
+      filter: drop-shadow(0 0 10px rgba(123,47,255,0.9));
+    }
+
+    .instruction-card p {
+      font-size: clamp(1.15rem, 4vw, 1.45rem);
+      line-height: 1.75;
+      color: var(--cream);
+    }
+
+    .instruction-card .hl { color: var(--purple-light); font-weight: 700; }
+
+    .scroll-hint {
+      margin-top: 36px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: fadeUp 0.8s ease 0.8s both;
+      color: var(--purple-light);
+      opacity: 0.55;
+      font-size: 1.05rem;
+    }
+
+    .scroll-hint .arr { font-size: 26px; animation: bob 1.6s ease-in-out infinite; }
+
+    @keyframes bob {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(9px); }
+    }
+
+    /* ══ HERO SECTIONS ══ */
+    .hero-section {
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(90,30,180,0.14) 0%, transparent 55%),
+        var(--black);
+    }
+
+    .num-tag {
+      position: absolute;
+      top: 22px; left: 26px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      color: rgba(192,132,252,0.28);
+    }
+
+    .corner-hearts {
+      position: absolute;
+      top: 18px; right: 22px;
+      font-size: 11px;
+      letter-spacing: 7px;
+      color: var(--purple-mid);
+      opacity: 0.5;
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      max-width: 420px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(48px);
+      transition: opacity 0.85s cubic-bezier(.22,1,.36,1), transform 0.85s cubic-bezier(.22,1,.36,1);
+    }
+
+    .card-body.in { opacity: 1; transform: translateY(0); }
+
+    .top-txt {
+      font-size: clamp(1.4rem, 5vw, 1.9rem);
+      color: var(--cream);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .hero-name {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.9rem, 6.5vw, 2.8rem);
+      font-weight: 600;
+      color: var(--purple-light);
+      text-shadow: 0 0 16px var(--purple), 0 0 40px rgba(123,47,255,0.35);
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+
+    .px-frame {
+      position: relative;
+      width: min(260px, 68vw);
+      height: min(260px, 68vw);
+    }
+
+    .px-frame::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border: 1px solid rgba(192,132,252,0.18);
+      border-radius: 6px;
+      pointer-events: none;
+      box-shadow: 0 0 24px rgba(123,47,255,0.18), inset 0 0 24px rgba(123,47,255,0.06);
+    }
+
+    .px-frame img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 0 18px rgba(168,85,247,0.45));
+      transition: transform 0.4s ease, filter 0.4s ease;
+    }
+
+    .px-frame img:hover {
+      transform: scale(1.06);
+      filter: drop-shadow(0 0 32px rgba(192,132,252,0.7));
+    }
+
+    .bot-txt {
+      font-size: clamp(1.2rem, 4.5vw, 1.65rem);
+      color: var(--cream);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .bot-txt .acc { color: var(--purple-light); font-weight: 700; }
+
+    /* ══ FINAL ══ */
+    #final {
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(90,30,180,0.25) 0%, transparent 65%),
+        var(--black);
+      text-align: center;
+    }
+
+    .final-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 26px;
+      max-width: 440px;
+      opacity: 0;
+      transform: translateY(48px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .final-body.in { opacity: 1; transform: translateY(0); }
+
+    .big-heart {
+      font-size: clamp(3.5rem, 14vw, 7rem);
+      animation: heartbeat 1.6s ease-in-out infinite;
+      filter: drop-shadow(0 0 22px rgba(168,85,247,0.85));
+      line-height: 1;
+    }
+
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); }
+      15%      { transform: scale(1.13); }
+      30%      { transform: scale(1); }
+      45%      { transform: scale(1.08); }
+    }
+
+    .final-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 6vw, 2.6rem);
+      color: var(--purple-light);
+      text-shadow: 0 0 30px var(--purple);
+      line-height: 1.25;
+    }
+
+    .final-msg {
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      color: var(--cream);
+      line-height: 1.8;
+      opacity: 0.9;
+    }
+
+    .final-sig {
+      font-size: clamp(1rem, 3.5vw, 1.3rem);
+      color: rgba(192,132,252,0.55);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .next-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, var(--purple-mid), var(--purple-dark));
+      border: 1px solid var(--purple);
+      color: var(--purple-light);
+      font-family: 'Caveat', cursive;
+      font-size: 1.25rem;
+      padding: 14px 36px;
+      border-radius: 60px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.35s;
+      box-shadow: 0 0 22px rgba(123,47,255,0.3);
+    }
+
+    .next-btn:hover {
+      background: linear-gradient(135deg, var(--purple), var(--purple-mid));
+      box-shadow: 0 0 38px rgba(168,85,247,0.55);
+      transform: scale(1.05);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* floating hearts */
+    .floaters { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+    .fh {
+      position: absolute;
+      bottom: -30px;
+      color: var(--purple-mid);
+      opacity: 0;
+      font-size: 14px;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+      8%   { opacity: 0.55; }
+      92%  { opacity: 0.2; }
+      100% { transform: translateY(-105vh) rotate(340deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+
+<audio id="bg-audio" loop>
+  <source src="cancion.mp3" type="audio/mpeg" />
+</audio>
+
+<div id="audio-bar">
+  <button id="play-btn" onclick="toggleAudio()">▶</button>
+  <span id="audio-label">♪ Dale play y empieza a deslizar</span>
+</div>
+
+<!-- ══ 0 · INTRO ══ -->
+<section id="intro">
+  <p class="intro-tag">✦ UN MENSAJE ESPECIAL ✦</p>
+  <h1 class="intro-title">
+    <br/>
+    <span>Milagros</span>
+  </h1>
+  <div class="glow-divider"></div>
+
+  <div class="instruction-card">
+    <p>
+      Lee todas las instrucciones primero antes de presionar.
+      Primero presiona <span class="hl">▶ play</span> en la música de abajo.<br/><br/>
+      Luego, mientras la canción suena,<br/>
+      ve <span class="hl">deslizando hacia abajo</span> 💜<br/><br/>
+      <span class="hl">sigue bajando.</span>
+    </p>
+  </div>
+
+  <div class="scroll-hint">
+    <span>desliza</span>
+    <span class="arr">↓</span>
+  </div>
+  <div class="floaters" id="f0"></div>
+</section>
+
+<!-- ══ 1 · HULK ══ -->
+<section class="hero-section">
+  <span class="num-tag">01 · 05</span>
+  <span class="corner-hearts">♥ ♥ ♥</span>
+  <div class="card-body" data-anim>
+    <p class="top-txt">
+      Yo quisiera ser el
+      <span class="hero-name">HULK</span>
+    </p>
+    <div class="px-frame">
+      <img src="hulk.png" alt="Hulk pixel art" />
+    </div>
+    <p class="bot-txt">…y <span class="acc">te protejo</span> 💚</p>
+  </div>
+  <div class="floaters" id="f1"></div>
+</section>
+
+<!-- ══ 2 · SUPERMAN ══ -->
+<section class="hero-section">
+  <span class="num-tag">02 · 05</span>
+  <span class="corner-hearts">♥ ♥ ♥</span>
+  <div class="card-body" data-anim>
+    <p class="top-txt">
+      <span class="hero-name">SUPERMAN</span>
+    </p>
+    <div class="px-frame">
+      <img src="superman.png" alt="Superman pixel art" />
+    </div>
+    <p class="bot-txt">
+      Para exhibirte<br/>
+      <span class="acc">el Universo</span> 🌌
+    </p>
+  </div>
+  <div class="floaters" id="f2"></div>
+</section>
+
+<!-- ══ 3 · BATMAN ══ -->
+<section class="hero-section">
+  <span class="num-tag">03 · 05</span>
+  <span class="corner-hearts">♥ ♥ ♥</span>
+  <div class="card-body" data-anim>
+    <p class="top-txt">
+      Si fuese
+      <span class="hero-name">BATMAN</span>
+    </p>
+    <div class="px-frame">
+      <img src="batman.png" alt="Batman pixel art" />
+    </div>
+    <p class="bot-txt">
+      No habría noches de temor.<br/>
+      La <span class="acc">Baticueva</span>…<br/>
+      nuestro nidito de Amor 🖤💜
+    </p>
+  </div>
+  <div class="floaters" id="f3"></div>
+</section>
+
+<!-- ══ 4 · HOMBRE ARAÑA ══ -->
+<section class="hero-section">
+  <span class="num-tag">04 · 05</span>
+  <span class="corner-hearts">♥ ♥ ♥</span>
+  <div class="card-body" data-anim>
+    <p class="top-txt">
+      Si yo fuera el
+      <span class="hero-name">HOMBRE ARAÑA</span>
+      por un beso:
+    </p>
+    <div class="px-frame">
+      <img src="spiderman.png" alt="Spider-Man pixel art" />
+    </div>
+    <p class="bot-txt">
+      100 pies de altura<br/>
+      <span class="acc">escalo sin esfuerzo</span><br/>
+      a tu balcón 🕷️
+    </p>
+  </div>
+  <div class="floaters" id="f4"></div>
+</section>
+
+<!-- ══ 5 · IRON MAN ══ -->
+<section class="hero-section">
+  <span class="num-tag">05 · 05</span>
+  <span class="corner-hearts">♥ ♥ ♥</span>
+  <div class="card-body" data-anim>
+    <p class="top-txt">
+      Y si alguien te pregunta<br/>
+      por tu Héroe Favorito…
+    </p>
+    <div class="px-frame">
+      <img src="ironman.png" alt="Iron Man pixel art" />
+    </div>
+    <p class="bot-txt">
+      Dile… que soy<br/>
+      <span class="acc" style="font-size:1.3em">YO</span> ❤️‍🔥
+    </p>
+  </div>
+  <div class="floaters" id="f5"></div>
+</section>
+
+<!-- ══ FINAL ══ -->
+<section id="final">
+  <div class="final-body" data-anim>
+    <span class="big-heart">💜</span>
+
+    <h2 class="final-title">
+      Milagros Belén,<br/>
+      eres mi heroína.
+    </h2>
+
+    <p class="final-msg">
+      No necesito poderes especiales.<br/>
+      Solo necesito estar contigo<br/>
+      para sentirme el más afortunado.
+    </p>
+
+    <p class="final-sig">— siempre tuyo 💜</p>
+  </div>
+  <div class="floaters" id="ff"></div>
+</section>
+
+<script>
+/* ═══ STARS ═══ */
+(function(){
+  const c = document.getElementById('stars-canvas');
+  const ctx = c.getContext('2d');
+  let stars = [];
+
+  function resize(){
+    c.width  = window.innerWidth;
+    c.height = window.innerHeight;
+  }
+
+  function init(){
+    stars = [];
+    for(let i = 0; i < 170; i++){
+      stars.push({
+        x:  Math.random() * c.width,
+        y:  Math.random() * c.height,
+        r:  Math.random() * 1.4 + 0.3,
+        a:  Math.random(),
+        da: (Math.random() * 0.006 + 0.002) * (Math.random() < 0.5 ? 1 : -1),
+        purple: Math.random() < 0.4,
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, c.width, c.height);
+    for(const s of stars){
+      s.a += s.da;
+      if(s.a <= 0 || s.a >= 1) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.purple
+        ? `rgba(192,132,252,${s.a * 0.7})`
+        : `rgba(255,255,255,${s.a * 0.55})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize(); init(); draw();
+  window.addEventListener('resize', ()=>{ resize(); init(); });
+})();
+
+/* ═══ AUDIO ═══ */
+const audio   = document.getElementById('bg-audio');
+const playBtn = document.getElementById('play-btn');
+const lbl     = document.getElementById('audio-label');
+let playing   = false;
+
+function toggleAudio(){
+  if(!playing){
+    audio.volume = 0.3;
+    audio.play().then(()=>{
+      playing = true;
+      playBtn.textContent = '⏸';
+      lbl.textContent = '♪ Desliza mientras escuchas';
+    }).catch(()=>{
+      lbl.textContent = '⚠ Toca de nuevo para reproducir';
+    });
+  } else {
+    audio.pause();
+    playing = false;
+    playBtn.textContent = '▶';
+    lbl.textContent = '♪ Dale play y empieza a deslizar';
+  }
+}
+
+/* ═══ SCROLL REVEAL ═══ */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.22 });
+
+document.querySelectorAll('[data-anim]').forEach(el => observer.observe(el));
+
+/* ═══ FLOATING HEARTS ═══ */
+function spawnHearts(id, n = 10){
+  const container = document.getElementById(id);
+  if(!container) return;
+  const symbols = ['♥','💜','✦','·','★'];
+  for(let i = 0; i < n; i++){
+    const h = document.createElement('span');
+    h.className = 'fh';
+    h.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    h.style.left        = Math.random() * 100 + '%';
+    h.style.fontSize    = (Math.random() * 10 + 10) + 'px';
+    const dur = Math.random() * 14 + 12;
+    h.style.animationDuration = dur + 's';
+    h.style.animationDelay   = '-' + (Math.random() * dur) + 's';
+    container.appendChild(h);
+  }
+}
+
+['f0','f1','f2','f3','f4','f5','ff'].forEach(id => spawnHearts(id, 10));
+</script>
+</body>
+</html>
