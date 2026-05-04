@@ -581,7 +581,7 @@ let playing   = false;
 
 function toggleAudio(){
   if(!playing){
-    audio.volume = 0.3;
+    audio.volume = 0.1;
     audio.play().then(()=>{
       playing = true;
       playBtn.textContent = '⏸';
