@@ -1167,13 +1167,10 @@ const TEXTS = {
   ]
 };
 
-// ── GITHUB GIST CONFIG ──
-// INSTRUCCIONES: Crea un Gist en GitHub con un archivo llamado "milagros_ppm.json"
-// que contenga: {"scores":[],"record":0,"games":0,"maxAcc":0}
-// Luego pon el ID del Gist aquí (la parte larga de la URL):
-const GIST_ID    = 'c6033a9555dfdb0f0fc7aa2972e69e5c';          // ← Reemplaza esto
-const GIST_TOKEN = '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';     // ← Token con scope: gist
-const GIST_FILE  = 'milagros_ppm.json';
+// ── JSONBIN CONFIG ──
+const BIN_ID        = '69f915e9aaba8821976f8e8b';
+const MASTER_KEY    = '$2a$10$geiRTLxbhDv1dzGC6Dd.TuKRADid09RccDywbbB4N9wapfobgBBGC';
+const ACCESS_KEY    = '$2a$10$G.9yKAPw5idmytjVlK04QudAQrCf2t5JYDi6mHOqImSkm8GHz2/ZC'; // X-Access-Key
 
 // ── STATE ──
 let currentMode   = 'frases';
@@ -1452,57 +1449,70 @@ function renderLeaderboard() {
   });
 }
 
-// ── GIST SYNC ──
-async function loadFromGist() {
-  if (GIST_ID === 'TU_GIST_ID_AQUI') {
-    setSyncStatus('⚠ Configura el Gist para guardar récords online', 'err');
-    return;
-  }
+async function loadFromJsonbin() {
   setSyncStatus('Cargando récords…', '');
   try {
-    const res  = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-      headers: { Authorization: `token ${GIST_TOKEN}`, Accept: 'application/vnd.github.v3+json' }
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      headers: {
+        'X-Master-Key': MASTER_KEY,
+        'X-Access-Key': ACCESS_KEY
+      }
     });
+
+    if (!res.ok) throw new Error('No se pudo cargar');
+
     const data = await res.json();
-    const raw  = data.files?.[GIST_FILE]?.content;
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      localData = { scores: parsed.scores||[], record: parsed.record||0, games: parsed.games||0, maxAcc: parsed.maxAcc||0 };
-      setSyncStatus('✓ Récords cargados 💜', 'ok');
-    }
+    const saved = data.record || data; // jsonbin devuelve { record: {...} }
+
+    localData = {
+      scores: saved.scores || [],
+      record: saved.record || 0,
+      games: saved.games || 0,
+      maxAcc: saved.maxAcc || 0
+    };
+
+    setSyncStatus('✓ Récords cargados 💜', 'ok');
   } catch(e) {
-    setSyncStatus('Sin conexión — jugando en modo local', 'err');
+    console.error(e);
+    setSyncStatus('Modo local (sin conexión)', 'err');
   }
   updateStatsUI();
   renderLeaderboard();
 }
 
-async function saveToGist() {
-  if (GIST_ID === 'TU_GIST_ID_AQUI') return;
+async function saveToJsonbin() {
   setSyncStatus('Guardando…', '');
   try {
-    const body = JSON.stringify({ files: { [GIST_FILE]: { content: JSON.stringify(localData) } } });
-    const res  = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-      method: 'PATCH',
-      headers: { Authorization: `token ${GIST_TOKEN}`, 'Content-Type': 'application/json' },
-      body
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': MASTER_KEY,
+        'X-Access-Key': ACCESS_KEY
+      },
+      body: JSON.stringify(localData)
     });
-    if (res.ok) setSyncStatus('✓ Récord guardado para siempre ⭐', 'ok');
-    else setSyncStatus('Error al guardar — intenta de nuevo', 'err');
+
+    if (res.ok) {
+      setSyncStatus('✓ Guardado correctamente ⭐', 'ok');
+    } else {
+      setSyncStatus('Error al guardar', 'err');
+    }
   } catch(e) {
-    setSyncStatus('Sin conexión — récord local solamente', 'err');
+    console.error(e);
+    setSyncStatus('Sin conexión — guardado local', 'err');
   }
 }
 
 function setSyncStatus(msg, cls) {
   const el = $('sync-status');
   el.textContent = msg;
-  el.className = 'sync-status ' + cls;
+  el.className = 'sync-status ' + (cls || '');
 }
 
-// ── INIT ──
+// ── INIT (cambia la llamada) ──
 resetGame();
-loadFromGist();
+loadFromJsonbin();   // ← Cambiado
 </script>
 </body>
 </html>
