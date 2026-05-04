@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Para Milagros 💜</title>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Cinzel:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     :root {
       --black:        #07070f;
@@ -349,7 +349,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* floating hearts */
     .floaters { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
     .fh {
@@ -367,13 +366,447 @@
       92%  { opacity: 0.2; }
       100% { transform: translateY(-105vh) rotate(340deg); opacity: 0; }
     }
+
+    /* ══════════════════════════════════════════
+       PPM GAME SECTION
+    ══════════════════════════════════════════ */
+    #ppm-section {
+      scroll-snap-align: start;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 20px 80px;
+      position: relative;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(61,17,102,0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(123,47,255,0.15) 0%, transparent 50%),
+        var(--black);
+    }
+
+    .ppm-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .ppm-header .tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: var(--purple-light);
+      opacity: 0.5;
+      margin-bottom: 10px;
+    }
+
+    .ppm-header h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 6vw, 3rem);
+      color: var(--white);
+      text-shadow: 0 0 24px rgba(168,85,247,0.4);
+    }
+
+    .ppm-header h2 span {
+      color: var(--purple-light);
+    }
+
+    .ppm-subtitle {
+      font-size: 1.1rem;
+      color: var(--cream);
+      opacity: 0.6;
+      margin-top: 6px;
+    }
+
+    /* GAME CONTAINER */
+    .game-wrap {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    /* SCORE BANNER */
+    .score-bar {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .score-pill {
+      background: rgba(61,17,102,0.35);
+      border: 1px solid rgba(192,132,252,0.2);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      backdrop-filter: blur(8px);
+    }
+
+    .score-pill .val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--purple-light);
+      font-weight: 700;
+    }
+
+    .score-pill.record .val {
+      color: #fbbf24;
+      text-shadow: 0 0 10px rgba(251,191,36,0.5);
+    }
+
+    /* MODE SELECTOR */
+    .mode-selector {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .mode-btn {
+      background: rgba(13,13,26,0.7);
+      border: 1px solid rgba(192,132,252,0.2);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: var(--cream);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .mode-btn:hover, .mode-btn.active {
+      background: var(--purple-mid);
+      border-color: var(--purple);
+      color: var(--white);
+      box-shadow: 0 0 14px rgba(123,47,255,0.4);
+    }
+
+    /* DIFFICULTY */
+    .diff-selector {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .diff-btn {
+      background: transparent;
+      border: 1px solid rgba(192,132,252,0.15);
+      border-radius: 6px;
+      padding: 5px 14px;
+      font-family: 'Caveat', cursive;
+      font-size: 0.95rem;
+      color: rgba(192,132,252,0.5);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .diff-btn:hover { color: var(--purple-light); border-color: var(--purple-light); }
+    .diff-btn.active { color: var(--purple-light); border-color: var(--purple); background: rgba(61,17,102,0.3); }
+
+    /* TEXT DISPLAY */
+    .text-display {
+      background: rgba(13,13,26,0.75);
+      border: 1px solid rgba(192,132,252,0.15);
+      border-radius: 16px;
+      padding: 22px 24px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: clamp(0.95rem, 3vw, 1.15rem);
+      line-height: 2;
+      word-break: break-word;
+      min-height: 120px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+      backdrop-filter: blur(10px);
+      letter-spacing: 0.04em;
+    }
+
+    .text-display .char {
+      display: inline;
+      transition: color 0.06s;
+    }
+
+    .char.done    { color: rgba(192,132,252,0.7); }
+    .char.current { color: #fff; background: rgba(123,47,255,0.5); border-radius: 2px; }
+    .char.wrong   { color: #f87171; background: rgba(239,68,68,0.2); border-radius: 2px; }
+    .char.pending { color: rgba(255,255,255,0.25); }
+
+    /* CURSOR blink */
+    @keyframes cursorBlink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+
+    /* INPUT */
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    #type-input {
+      flex: 1;
+      background: rgba(13,13,26,0.8);
+      border: 1px solid rgba(192,132,252,0.25);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.1rem;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #type-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 18px rgba(123,47,255,0.25);
+    }
+
+    #type-input.error {
+      border-color: #f87171;
+      box-shadow: 0 0 14px rgba(248,113,113,0.3);
+    }
+
+    #type-input:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* TIMER BAR */
+    .timer-wrap {
+      margin-bottom: 14px;
+    }
+
+    .timer-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: rgba(192,132,252,0.5);
+      margin-bottom: 5px;
+    }
+
+    .timer-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.4rem;
+      color: var(--purple-light);
+    }
+
+    .timer-bar-bg {
+      height: 4px;
+      background: rgba(61,17,102,0.4);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .timer-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--purple), var(--purple-light));
+      transition: width 0.1s linear, background 0.5s;
+    }
+
+    .timer-bar-fill.low {
+      background: linear-gradient(90deg, #f87171, #fb923c);
+    }
+
+    /* ACTION BUTTON */
+    .action-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--purple);
+      background: linear-gradient(135deg, var(--purple-mid), rgba(22,9,38,0.9));
+      color: var(--purple-light);
+      font-family: 'Caveat', cursive;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 0.05em;
+      margin-bottom: 18px;
+    }
+
+    .action-btn:hover {
+      background: linear-gradient(135deg, var(--purple), var(--purple-mid));
+      box-shadow: 0 0 28px rgba(123,47,255,0.45);
+      transform: translateY(-2px);
+    }
+
+    /* RESULT PANEL */
+    .result-panel {
+      display: none;
+      background: rgba(13,13,26,0.8);
+      border: 1px solid rgba(192,132,252,0.2);
+      border-radius: 18px;
+      padding: 26px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .result-panel.show { display: block; }
+
+    .result-panel h3 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.3rem, 5vw, 2rem);
+      color: var(--purple-light);
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px var(--purple);
+    }
+
+    .result-stats {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .rs {
+      background: rgba(61,17,102,0.35);
+      border: 1px solid rgba(192,132,252,0.18);
+      border-radius: 14px;
+      padding: 14px 20px;
+      min-width: 110px;
+    }
+
+    .rs-label {
+      font-size: 0.85rem;
+      color: rgba(192,132,252,0.55);
+      margin-bottom: 4px;
+    }
+
+    .rs-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.9rem;
+      color: var(--purple-light);
+      font-weight: 700;
+    }
+
+    .rs-val.gold {
+      color: #fbbf24;
+      text-shadow: 0 0 16px rgba(251,191,36,0.6);
+    }
+
+    .result-msg {
+      font-size: 1.2rem;
+      color: var(--cream);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      opacity: 0.85;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .r-btn {
+      padding: 12px 26px;
+      border-radius: 50px;
+      border: 1px solid rgba(192,132,252,0.3);
+      background: rgba(61,17,102,0.3);
+      color: var(--purple-light);
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .r-btn:hover {
+      background: var(--purple-mid);
+      border-color: var(--purple);
+      box-shadow: 0 0 14px rgba(123,47,255,0.4);
+    }
+
+    .r-btn.primary {
+      background: var(--purple-mid);
+      border-color: var(--purple);
+    }
+
+    /* LEADERBOARD */
+    .leaderboard {
+      margin-top: 20px;
+    }
+
+    .lb-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      color: rgba(192,132,252,0.4);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(61,17,102,0.2);
+      border: 1px solid rgba(192,132,252,0.1);
+      margin-bottom: 7px;
+      transition: border-color 0.2s;
+    }
+
+    .lb-row:hover { border-color: rgba(192,132,252,0.3); }
+    .lb-row.highlight { border-color: #fbbf24; background: rgba(251,191,36,0.07); }
+
+    .lb-pos { font-family: 'Cinzel', serif; font-size: 0.8rem; color: rgba(192,132,252,0.4); width: 22px; }
+    .lb-pos.gold   { color: #fbbf24; }
+    .lb-pos.silver { color: #94a3b8; }
+    .lb-pos.bronze { color: #a16207; }
+
+    .lb-mode { flex: 1; font-size: 1rem; color: var(--cream); }
+    .lb-wpm  { font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; color: var(--purple-light); }
+    .lb-acc  { font-size: 0.9rem; color: rgba(192,132,252,0.5); width: 50px; text-align: right; }
+
+    .lb-date { font-size: 0.8rem; color: rgba(192,132,252,0.3); }
+
+    /* SYNC STATUS */
+    .sync-status {
+      text-align: center;
+      font-size: 0.85rem;
+      color: rgba(192,132,252,0.35);
+      margin-top: 10px;
+      min-height: 20px;
+    }
+
+    .sync-status.ok   { color: rgba(134,239,172,0.6); }
+    .sync-status.err  { color: rgba(248,113,113,0.6); }
+
+    /* PROGRESS BAR during typing */
+    .progress-bar-bg {
+      height: 3px;
+      background: rgba(61,17,102,0.3);
+      border-radius: 2px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple-mid), var(--purple-light));
+      border-radius: 2px;
+      transition: width 0.15s ease;
+    }
   </style>
 </head>
 <body>
 
 <canvas id="stars-canvas"></canvas>
 
-<audio id="bg-audio" loop>
+<!-- NO loop attribute — se quita al terminar por JS -->
+<audio id="bg-audio">
   <source src="cancion.mp3" type="audio/mpeg" />
 </audio>
 
@@ -414,13 +847,8 @@
   <span class="num-tag">01 · 05</span>
   <span class="corner-hearts">♥ ♥ ♥</span>
   <div class="card-body" data-anim>
-    <p class="top-txt">
-      Yo quisiera ser el
-      <span class="hero-name">HULK</span>
-    </p>
-    <div class="px-frame">
-      <img src="hulk.png" alt="Hulk pixel art" />
-    </div>
+    <p class="top-txt">Yo quisiera ser el <span class="hero-name">HULK</span></p>
+    <div class="px-frame"><img src="hulk.png" alt="Hulk pixel art" /></div>
     <p class="bot-txt">…y <span class="acc">te protejo</span> 💚</p>
   </div>
   <div class="floaters" id="f1"></div>
@@ -431,16 +859,9 @@
   <span class="num-tag">02 · 05</span>
   <span class="corner-hearts">♥ ♥ ♥</span>
   <div class="card-body" data-anim>
-    <p class="top-txt">
-      <span class="hero-name">SUPERMAN</span>
-    </p>
-    <div class="px-frame">
-      <img src="superman.png" alt="Superman pixel art" />
-    </div>
-    <p class="bot-txt">
-      Para exhibirte<br/>
-      <span class="acc">el Universo</span> 🌌
-    </p>
+    <p class="top-txt"><span class="hero-name">SUPERMAN</span></p>
+    <div class="px-frame"><img src="superman.png" alt="Superman pixel art" /></div>
+    <p class="bot-txt">Para exhibirte<br/><span class="acc">el Universo</span> 🌌</p>
   </div>
   <div class="floaters" id="f2"></div>
 </section>
@@ -450,18 +871,9 @@
   <span class="num-tag">03 · 05</span>
   <span class="corner-hearts">♥ ♥ ♥</span>
   <div class="card-body" data-anim>
-    <p class="top-txt">
-      Si fuese
-      <span class="hero-name">BATMAN</span>
-    </p>
-    <div class="px-frame">
-      <img src="batman.png" alt="Batman pixel art" />
-    </div>
-    <p class="bot-txt">
-      No habría noches de temor.<br/>
-      La <span class="acc">Baticueva</span>…<br/>
-      nuestro nidito de Amor 🖤💜
-    </p>
+    <p class="top-txt">Si fuese <span class="hero-name">BATMAN</span></p>
+    <div class="px-frame"><img src="batman.png" alt="Batman pixel art" /></div>
+    <p class="bot-txt">No habría noches de temor.<br/>La <span class="acc">Baticueva</span>…<br/>nuestro nidito de Amor 🖤💜</p>
   </div>
   <div class="floaters" id="f3"></div>
 </section>
@@ -471,19 +883,9 @@
   <span class="num-tag">04 · 05</span>
   <span class="corner-hearts">♥ ♥ ♥</span>
   <div class="card-body" data-anim>
-    <p class="top-txt">
-      Si yo fuera el
-      <span class="hero-name">HOMBRE ARAÑA</span>
-      por un beso:
-    </p>
-    <div class="px-frame">
-      <img src="spiderman.png" alt="Spider-Man pixel art" />
-    </div>
-    <p class="bot-txt">
-      100 pies de altura<br/>
-      <span class="acc">escalo sin esfuerzo</span><br/>
-      a tu balcón 🕷️
-    </p>
+    <p class="top-txt">Si yo fuera el <span class="hero-name">HOMBRE ARAÑA</span> por un beso:</p>
+    <div class="px-frame"><img src="spiderman.png" alt="Spider-Man pixel art" /></div>
+    <p class="bot-txt">100 pies de altura<br/><span class="acc">escalo sin esfuerzo</span><br/>a tu balcón 🕷️</p>
   </div>
   <div class="floaters" id="f4"></div>
 </section>
@@ -493,17 +895,9 @@
   <span class="num-tag">05 · 05</span>
   <span class="corner-hearts">♥ ♥ ♥</span>
   <div class="card-body" data-anim>
-    <p class="top-txt">
-      Y si alguien te pregunta<br/>
-      por tu Héroe Favorito…
-    </p>
-    <div class="px-frame">
-      <img src="ironman.png" alt="Iron Man pixel art" />
-    </div>
-    <p class="bot-txt">
-      Dile… que soy<br/>
-      <span class="acc" style="font-size:1.3em">YO</span> ❤️‍🔥
-    </p>
+    <p class="top-txt">Y si alguien te pregunta<br/>por tu Héroe Favorito…</p>
+    <div class="px-frame"><img src="ironman.png" alt="Iron Man pixel art" /></div>
+    <p class="bot-txt">Dile… que soy<br/><span class="acc" style="font-size:1.3em">YO</span> ❤️‍🔥</p>
   </div>
   <div class="floaters" id="f5"></div>
 </section>
@@ -512,21 +906,116 @@
 <section id="final">
   <div class="final-body" data-anim>
     <span class="big-heart">💜</span>
-
-    <h2 class="final-title">
-      Milagros Belén,<br/>
-      eres mi heroína.
-    </h2>
-
-    <p class="final-msg">
-      No necesito poderes especiales.<br/>
-      Solo necesito estar contigo<br/>
-      para sentirme el más afortunado.
-    </p>
-
+    <h2 class="final-title">Milagros Belén,<br/>eres mi heroína.</h2>
+    <p class="final-msg">No necesito poderes especiales.<br/>Solo necesito estar contigo<br/>para sentirme el más afortunado.</p>
     <p class="final-sig">— siempre tuyo 💜</p>
+    <a href="#ppm-section" class="next-btn">⌨️ ¿Puedes superar 60 PPM?</a>
   </div>
   <div class="floaters" id="ff"></div>
+</section>
+
+<!-- ══ PPM GAME ══ -->
+<section id="ppm-section">
+  <div class="ppm-header">
+    <p class="tag">✦ DESAFÍO ESPECIAL ✦</p>
+    <h2>Juego de <span>PPM</span></h2>
+    <p class="ppm-subtitle">¿Qué tan rápido escribes, Belén? 💜</p>
+  </div>
+
+  <div class="game-wrap">
+    <!-- RECORD + STATS -->
+    <div class="score-bar">
+      <div class="score-pill record">
+        🏆 Récord: <span class="val" id="stat-record">—</span> <small style="color:rgba(192,132,252,0.4);font-size:0.75em">PPM</small>
+      </div>
+      <div class="score-pill">
+        🎯 Partidas: <span class="val" id="stat-games">0</span>
+      </div>
+      <div class="score-pill">
+        ✨ Precisión máx: <span class="val" id="stat-acc">—</span>
+      </div>
+    </div>
+
+    <!-- MODE -->
+    <div class="mode-selector">
+      <button class="mode-btn active" data-mode="frases" onclick="setMode('frases',this)">💬 Frases</button>
+      <button class="mode-btn" data-mode="palabras" onclick="setMode('palabras',this)">📝 Palabras</button>
+      <button class="mode-btn" data-mode="codigo" onclick="setMode('codigo',this)">💻 Código</button>
+      <button class="mode-btn" data-mode="emociones" onclick="setMode('emociones',this)">💜 Emociones</button>
+    </div>
+
+    <!-- DIFFICULTY -->
+    <div class="diff-selector">
+      <button class="diff-btn active" data-diff="30"  onclick="setDiff(30,this)">30s</button>
+      <button class="diff-btn" data-diff="60"  onclick="setDiff(60,this)">60s</button>
+      <button class="diff-btn" data-diff="90"  onclick="setDiff(90,this)">90s</button>
+      <button class="diff-btn" data-diff="120" onclick="setDiff(120,this)">120s</button>
+    </div>
+
+    <!-- TIMER -->
+    <div class="timer-wrap">
+      <div class="timer-top">
+        <span>Tiempo</span>
+        <span class="timer-val" id="timer-display">30</span>
+      </div>
+      <div class="timer-bar-bg">
+        <div class="timer-bar-fill" id="timer-bar" style="width:100%"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="prog-bar" style="width:0%"></div>
+    </div>
+
+    <!-- TEXT -->
+    <div class="text-display" id="text-display"></div>
+
+    <!-- INPUT -->
+    <div class="input-row">
+      <input type="text" id="type-input" placeholder="Haz clic aquí y empieza a escribir..." disabled autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+    <!-- START/RESTART -->
+    <button class="action-btn" id="action-btn" onclick="handleAction()">▶ Empezar</button>
+
+    <!-- RESULT -->
+    <div class="result-panel" id="result-panel">
+      <h3 id="result-title">¡Resultado!</h3>
+      <div class="result-stats">
+        <div class="rs">
+          <div class="rs-label">PPM</div>
+          <div class="rs-val" id="r-wpm">0</div>
+        </div>
+        <div class="rs">
+          <div class="rs-label">Precisión</div>
+          <div class="rs-val" id="r-acc">0%</div>
+        </div>
+        <div class="rs">
+          <div class="rs-label">Palabras</div>
+          <div class="rs-val" id="r-words">0</div>
+        </div>
+        <div class="rs">
+          <div class="rs-label">Errores</div>
+          <div class="rs-val" id="r-errs">0</div>
+        </div>
+      </div>
+      <p class="result-msg" id="result-msg"></p>
+      <div class="result-actions">
+        <button class="r-btn primary" onclick="handleAction()">🔄 Jugar de nuevo</button>
+        <button class="r-btn" onclick="changeTextSameMode()">🔀 Otro texto</button>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="leaderboard" id="leaderboard-wrap">
+      <p class="lb-title">✦ TUS MEJORES MARCAS ✦</p>
+      <div id="lb-list"></div>
+      <div class="sync-status" id="sync-status"></div>
+    </div>
+
+  </div>
+  <div class="floaters" id="fppm"></div>
 </section>
 
 <script>
@@ -535,97 +1024,485 @@
   const c = document.getElementById('stars-canvas');
   const ctx = c.getContext('2d');
   let stars = [];
-
-  function resize(){
-    c.width  = window.innerWidth;
-    c.height = window.innerHeight;
-  }
-
+  function resize(){ c.width=window.innerWidth; c.height=window.innerHeight; }
   function init(){
-    stars = [];
-    for(let i = 0; i < 170; i++){
-      stars.push({
-        x:  Math.random() * c.width,
-        y:  Math.random() * c.height,
-        r:  Math.random() * 1.4 + 0.3,
-        a:  Math.random(),
-        da: (Math.random() * 0.006 + 0.002) * (Math.random() < 0.5 ? 1 : -1),
-        purple: Math.random() < 0.4,
-      });
-    }
+    stars=[];
+    for(let i=0;i<170;i++) stars.push({
+      x:Math.random()*c.width, y:Math.random()*c.height,
+      r:Math.random()*1.4+0.3, a:Math.random(),
+      da:(Math.random()*0.006+0.002)*(Math.random()<0.5?1:-1),
+      purple:Math.random()<0.4
+    });
   }
-
   function draw(){
-    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.clearRect(0,0,c.width,c.height);
     for(const s of stars){
-      s.a += s.da;
-      if(s.a <= 0 || s.a >= 1) s.da *= -1;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = s.purple
-        ? `rgba(192,132,252,${s.a * 0.7})`
-        : `rgba(255,255,255,${s.a * 0.55})`;
+      s.a+=s.da; if(s.a<=0||s.a>=1) s.da*=-1;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=s.purple?`rgba(192,132,252,${s.a*0.7})`:`rgba(255,255,255,${s.a*0.55})`;
       ctx.fill();
     }
     requestAnimationFrame(draw);
   }
-
   resize(); init(); draw();
-  window.addEventListener('resize', ()=>{ resize(); init(); });
+  window.addEventListener('resize',()=>{ resize(); init(); });
 })();
 
-/* ═══ AUDIO ═══ */
+/* ═══ AUDIO (sin loop, para cuando termina) ═══ */
 const audio   = document.getElementById('bg-audio');
 const playBtn = document.getElementById('play-btn');
 const lbl     = document.getElementById('audio-label');
 let playing   = false;
 
+audio.addEventListener('ended', () => {
+  playing = false;
+  playBtn.textContent = '▶';
+  lbl.textContent = '♪ La canción terminó 💜';
+});
+
 function toggleAudio(){
   if(!playing){
-    audio.volume = 0.1;
+    audio.volume=0.1;
     audio.play().then(()=>{
-      playing = true;
-      playBtn.textContent = '⏸';
-      lbl.textContent = '♪ Desliza mientras escuchas';
-    }).catch(()=>{
-      lbl.textContent = '⚠ Toca de nuevo para reproducir';
-    });
+      playing=true;
+      playBtn.textContent='⏸';
+      lbl.textContent='♪ Desliza mientras escuchas';
+    }).catch(()=>{ lbl.textContent='⚠ Toca de nuevo para reproducir'; });
   } else {
     audio.pause();
-    playing = false;
-    playBtn.textContent = '▶';
-    lbl.textContent = '♪ Dale play y empieza a deslizar';
+    playing=false;
+    playBtn.textContent='▶';
+    lbl.textContent='♪ Dale play y empieza a deslizar';
   }
 }
 
 /* ═══ SCROLL REVEAL ═══ */
 const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(e.isIntersecting) e.target.classList.add('in');
-  });
-}, { threshold: 0.22 });
-
-document.querySelectorAll('[data-anim]').forEach(el => observer.observe(el));
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{ threshold:0.22 });
+document.querySelectorAll('[data-anim]').forEach(el=>observer.observe(el));
 
 /* ═══ FLOATING HEARTS ═══ */
-function spawnHearts(id, n = 10){
-  const container = document.getElementById(id);
-  if(!container) return;
-  const symbols = ['♥','💜','✦','·','★'];
-  for(let i = 0; i < n; i++){
-    const h = document.createElement('span');
-    h.className = 'fh';
-    h.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-    h.style.left        = Math.random() * 100 + '%';
-    h.style.fontSize    = (Math.random() * 10 + 10) + 'px';
-    const dur = Math.random() * 14 + 12;
-    h.style.animationDuration = dur + 's';
-    h.style.animationDelay   = '-' + (Math.random() * dur) + 's';
-    container.appendChild(h);
+function spawnHearts(id,n=10){
+  const c=document.getElementById(id); if(!c) return;
+  const sym=['♥','💜','✦','·','★'];
+  for(let i=0;i<n;i++){
+    const h=document.createElement('span'); h.className='fh';
+    h.textContent=sym[Math.floor(Math.random()*sym.length)];
+    h.style.left=Math.random()*100+'%';
+    h.style.fontSize=(Math.random()*10+10)+'px';
+    const dur=Math.random()*14+12;
+    h.style.animationDuration=dur+'s';
+    h.style.animationDelay='-'+(Math.random()*dur)+'s';
+    c.appendChild(h);
+  }
+}
+['f0','f1','f2','f3','f4','f5','ff','fppm'].forEach(id=>spawnHearts(id,10));
+
+/* ═══════════════════════════════════════════
+   PPM GAME ENGINE
+═══════════════════════════════════════════ */
+
+// ── TEXTS ──
+const TEXTS = {
+  frases: [
+    "El sol sale cada manana y pinta el cielo de naranja antes de que el mundo despierte por completo.",
+    "Un gato negro camino por el tejado bajo la lluvia sin apurarse para nada en absoluto.",
+    "La mejor forma de aprender algo nuevo es practicarlo todos los dias aunque sea por unos pocos minutos.",
+    "Cuando el viento sopla fuerte las hojas de los arboles danzan como si supieran exactamente lo que hacen.",
+    "El cielo de noche tiene miles de estrellas pero la mayoria son tan debiles que no las podemos ver.",
+    "Preparar una buena taza de cafe por la manana puede cambiar completamente el inicio de tu dia.",
+    "Los libros son portales a otros mundos donde el tiempo no existe y todo es posible si lo imaginas.",
+    "Correr tres veces por semana mejora el estado de animo y da mucha mas energia para el resto del dia.",
+    "Una buena pelicula con palomitas y una cobija es el plan perfecto para una tarde de lluvia tranquila.",
+    "El oceano parece infinito desde la orilla pero en realidad cada ola tiene un principio y un final.",
+    "Aprender a cocinar algo nuevo es una de las mejores formas de pasar una tarde libre con buena musica.",
+    "Los colores del atardecer cambian tan rapido que si no los miras en ese momento ya no los veras igual.",
+    "Tener una planta en casa hace que el espacio se sienta mas vivo y agradable para trabajar o descansar.",
+    "El primer sorbo de agua fria despues de mucho ejercicio es una de las mejores sensaciones del mundo.",
+    "Escuchar tu cancion favorita en un dia largo puede darte justo la energia que necesitabas para seguir.",
+    "Los fines de semana son perfectos para probar recetas nuevas o salir a explorar lugares que no conoces.",
+    "Leer antes de dormir es uno de los habitos mas relajantes que puedes adoptar para dormir mejor cada noche.",
+    "Una caminata corta al aire libre despeja la mente mucho mas que quedarse sentado frente a una pantalla.",
+  ],
+  palabras: [
+    "casa perro gato mesa silla libro lapiz papel vaso agua mesa taza puerta luz cama suelo techo pared reloj llave",
+    "ciudad calle parque tienda mercado plaza banco cine teatro museo estadio jardin puente rio lago monte bosque campo playa",
+    "rojo azul verde negro blanco gris naranja rosado morado marron amarillo celeste beige dorado plateado oscuro claro vivo palido",
+    "correr saltar nadar bailar cantar leer escribir dibujar pintar cocinar dormir despertar caminar trabajar estudiar jugar reir hablar pensar",
+    "rapido lento suave fuerte grande pequeno alto bajo gordo flaco duro blando frio caliente dulce amargo salado agrio fresco seco",
+    "lunes martes miercoles jueves viernes sabado domingo enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre",
+    "uno dos tres cuatro cinco seis siete ocho nueve diez veinte treinta cuarenta cincuenta sesenta setenta ochenta noventa cien mil",
+    "mesa silla sofa cama armario espejo lampara alfombra cortina nevera horno lavadora plancha estufa ducha bano cocina salon cuarto",
+    "manzana pera uva limon naranja fresa melon sandia pina mango papaya ciruela durazno coco platano frambuesa arandano cereza kiwi",
+    "perro gato pez pajaro conejo hamster tortuga serpiente iguana loro vaca caballo cerdo oveja cabra pato gallina paloma aguila buho",
+  ],
+  codigo: [
+    "const nombre = 'Milagros'; const edad = 20; console.log(nombre, edad); let activo = true;",
+    "function saludar(nombre) { return 'Hola ' + nombre; } console.log(saludar('Mili'));",
+    "for (let i = 0; i < 10; i++) { console.log('vuelta numero ' + i); }",
+    "const lista = ['gato', 'perro', 'pez']; lista.forEach(animal => console.log(animal));",
+    "let suma = 0; for (let n = 1; n <= 100; n++) { suma += n; } console.log(suma);",
+    "const cuadrado = (x) => x * x; console.log(cuadrado(5)); console.log(cuadrado(12));",
+    "if (hora < 12) { console.log('buenos dias'); } else if (hora < 18) { console.log('buenas tardes'); }",
+    "const usuario = { nombre: 'Mili', activo: true, puntos: 980 }; console.log(usuario.nombre);",
+    "function maximo(a, b) { return a > b ? a : b; } console.log(maximo(34, 87));",
+    "const numeros = [3, 7, 2, 9, 1]; numeros.sort((a, b) => a - b); console.log(numeros);",
+    "let texto = 'hola mundo'; console.log(texto.toUpperCase()); console.log(texto.length);",
+    "const colores = ['rojo', 'azul', 'verde']; const primero = colores[0]; console.log(primero);",
+  ],
+  emociones: [
+    "Hay dias en que todo sale mal pero igual llegas al final y eso ya es suficiente para estar orgullosa.",
+    "A veces la mente se pone muy ocupada y lo mejor que puedes hacer es respirar hondo y dejar pasar los pensamientos.",
+    "Sentirse cansada no significa que eres debil. Significa que llevas un rato dando lo mejor de ti misma.",
+    "Es normal no tener ganas de nada algunos dias. El descanso tambien es parte de avanzar y estar bien.",
+    "Hay personas que con solo aparecer hacen que el ambiente cambie para mejor sin decir absolutamente nada.",
+    "Equivocarse no es fracasar. Es la unica manera real de aprender algo que despues te va a servir de verdad.",
+    "No todo tiene que tener sentido ahora mismo. Algunas cosas se entienden despues cuando ya paso el momento.",
+    "La confianza no se construye de golpe. Se arma poco a poco con cosas pequenas que se repiten todos los dias.",
+    "Hay conversaciones que duran una hora pero se sienten como un abrazo largo que necesitabas desde hace tiempo.",
+    "Ser honesta con lo que sientes aunque sea incomodo es una de las cosas mas valientes que alguien puede hacer.",
+    "El progreso no siempre se ve desde adentro. A veces solo lo notan los que te conocen y te ven desde afuera.",
+    "Pedir ayuda cuando la necesitas no te hace menos capaz. Te hace mas inteligente que quienes no lo hacen.",
+  ]
+};
+
+// ── GITHUB GIST CONFIG ──
+// INSTRUCCIONES: Crea un Gist en GitHub con un archivo llamado "milagros_ppm.json"
+// que contenga: {"scores":[],"record":0,"games":0,"maxAcc":0}
+// Luego pon el ID del Gist aquí (la parte larga de la URL):
+const GIST_ID    = 'c6033a9555dfdb0f0fc7aa2972e69e5c';          // ← Reemplaza esto
+const GIST_TOKEN = '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';     // ← Token con scope: gist
+const GIST_FILE  = 'milagros_ppm.json';
+
+// ── STATE ──
+let currentMode   = 'frases';
+let currentDiff   = 30;
+let currentText   = '';
+let charIndex     = 0;
+let startTime     = null;
+let timerInterval = null;
+let timeLeft      = 30;
+let totalErrors   = 0;
+let started       = false;
+let finished      = false;
+let localData     = { scores: [], record: 0, games: 0, maxAcc: 0 };
+
+// ── HELPERS ──
+const $ = id => document.getElementById(id);
+
+function getRandText(mode) {
+  const arr = TEXTS[mode];
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function setMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (!started) resetGame();
+}
+
+function setDiff(secs, btn) {
+  currentDiff = secs;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (!started) { timeLeft = secs; $('timer-display').textContent = secs; $('timer-bar').style.width = '100%'; }
+}
+
+function handleAction() {
+  if (!started || finished) {
+    startGame();
   }
 }
 
-['f0','f1','f2','f3','f4','f5','ff'].forEach(id => spawnHearts(id, 10));
+function changeTextSameMode() {
+  resetGame(true);
+}
+
+// ── BUILD CHAR SPANS ──
+function buildDisplay(text) {
+  const el = $('text-display');
+  el.innerHTML = '';
+  for (let i = 0; i < text.length; i++) {
+    const s = document.createElement('span');
+    s.className = i === 0 ? 'char current' : 'char pending';
+    s.textContent = text[i];
+    s.id = 'c' + i;
+    el.appendChild(s);
+  }
+}
+
+// ── START ──
+function startGame() {
+  clearInterval(timerInterval);
+  currentText  = getRandText(currentMode);
+  charIndex    = 0;
+  totalErrors  = 0;
+  startTime    = null;
+  timeLeft     = currentDiff;
+  started      = true;
+  finished     = false;
+
+  buildDisplay(currentText);
+  $('type-input').value = '';
+  $('type-input').disabled = false;
+  $('type-input').classList.remove('error');
+  $('type-input').focus();
+  $('action-btn').textContent = '⏹ Reiniciar';
+  $('result-panel').classList.remove('show');
+  $('timer-display').textContent = currentDiff;
+  $('timer-bar').style.width = '100%';
+  $('timer-bar').classList.remove('low');
+  $('prog-bar').style.width = '0%';
+}
+
+// ── RESET (no start) ──
+function resetGame(forceNewText) {
+  clearInterval(timerInterval);
+  started   = false;
+  finished  = false;
+  charIndex = 0;
+  totalErrors = 0;
+  timeLeft  = currentDiff;
+
+  currentText = getRandText(currentMode);
+  buildDisplay(currentText);
+  $('type-input').value = '';
+  $('type-input').disabled = true;
+  $('type-input').classList.remove('error');
+  $('action-btn').textContent = '▶ Empezar';
+  $('result-panel').classList.remove('show');
+  $('timer-display').textContent = currentDiff;
+  $('timer-bar').style.width = '100%';
+  $('timer-bar').classList.remove('low');
+  $('prog-bar').style.width = '0%';
+}
+
+// ── TYPING ──
+$('type-input').addEventListener('input', function(e) {
+  if (!started || finished) return;
+
+  if (!startTime) {
+    startTime = Date.now();
+    startTimer();
+  }
+
+  const typed = this.value;
+  const expected = currentText[charIndex];
+
+  if (typed === '') return;
+
+  const lastChar = typed[typed.length - 1];
+
+  if (lastChar === expected) {
+    // correct
+    const span = $('c' + charIndex);
+    if (span) span.className = 'char done';
+    this.classList.remove('error');
+    charIndex++;
+    const next = $('c' + charIndex);
+    if (next) next.className = 'char current';
+    this.value = '';
+
+    // progress
+    const pct = Math.round((charIndex / currentText.length) * 100);
+    $('prog-bar').style.width = pct + '%';
+
+    if (charIndex >= currentText.length) {
+      // all done early — load new text seamlessly
+      const oldText = currentText;
+      currentText = getRandText(currentMode);
+      charIndex   = 0;
+      buildDisplay(currentText);
+      $('c0').className = 'char current';
+    }
+  } else {
+    // wrong
+    const span = $('c' + charIndex);
+    if (span) span.className = 'char wrong';
+    this.classList.add('error');
+    totalErrors++;
+    // brief shake
+    setTimeout(() => {
+      this.classList.remove('error');
+      if (span) span.className = 'char current';
+    }, 300);
+    this.value = '';
+  }
+});
+
+// backspace support via keydown
+$('type-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { resetGame(); }
+});
+
+// ── TIMER ──
+function startTimer() {
+  const total = currentDiff;
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    $('timer-display').textContent = timeLeft;
+    const pct = (timeLeft / total) * 100;
+    $('timer-bar').style.width = pct + '%';
+    if (timeLeft <= 10) $('timer-bar').classList.add('low');
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      endGame();
+    }
+  }, 1000);
+}
+
+// ── END GAME ──
+function endGame() {
+  finished = true;
+  started  = false;
+  $('type-input').disabled = true;
+  $('action-btn').textContent = '🔄 Jugar de nuevo';
+
+  const elapsed   = currentDiff; // seconds used
+  const typedOk   = charIndex;
+  // count words typed
+  const fullSoFar = currentText.substring(0, charIndex);
+  const wordCount = fullSoFar.trim().split(/\s+/).filter(w => w.length > 0).length;
+  const wpm       = Math.round((typedOk / 5) / (elapsed / 60));
+  const totalChars = typedOk + totalErrors;
+  const acc       = totalChars > 0 ? Math.round((typedOk / totalChars) * 100) : 0;
+
+  // update display
+  $('r-wpm').textContent   = wpm;
+  $('r-acc').textContent   = acc + '%';
+  $('r-words').textContent = wordCount;
+  $('r-errs').textContent  = totalErrors;
+
+  // check record
+  const isRecord = wpm > localData.record;
+  if (isRecord) {
+    localData.record = wpm;
+    $('r-wpm').classList.add('gold');
+  } else {
+    $('r-wpm').classList.remove('gold');
+  }
+
+  if (acc > localData.maxAcc) localData.maxAcc = acc;
+  localData.games++;
+
+  // add score entry
+  const entry = {
+    wpm, acc, words: wordCount, errors: totalErrors,
+    mode: currentMode, diff: currentDiff,
+    date: new Date().toLocaleDateString('es', { day:'2-digit', month:'short' }),
+    ts: Date.now()
+  };
+  localData.scores.unshift(entry);
+  if (localData.scores.length > 50) localData.scores = localData.scores.slice(0, 50);
+
+  // result message
+  let msg = '';
+  if (wpm >= 100) msg = '¡Eres una máquina! 🤖 Mis dedos lloran de envidia.';
+  else if (wpm >= 80) msg = '¡Increíble velocidad, Belén! 🔥 Estás en el top.';
+  else if (wpm >= 60) msg = '¡Muy bien! 💪 Estás por encima del promedio mundial.';
+  else if (wpm >= 40) msg = '¡Buen resultado! ✨ Sigue practicando y lo superas fácil.';
+  else if (wpm >= 20) msg = '¡Eso estuvo bien! 💜 La práctica hace al maestro.';
+  else msg = '¡No importa el número, lo que cuenta es que lo intentaste! 💜';
+
+  if (isRecord) msg = '🏆 ¡NUEVO RÉCORD PERSONAL! ' + msg;
+
+  $('result-title').textContent = isRecord ? '¡Nuevo récord! 🏆' : '¡Resultado!';
+  $('result-msg').textContent   = msg;
+  $('result-panel').classList.add('show');
+
+  updateStatsUI();
+  saveToGist();
+  renderLeaderboard();
+}
+
+// ── UI STATS ──
+function updateStatsUI() {
+  $('stat-record').textContent = localData.record || '—';
+  $('stat-games').textContent  = localData.games;
+  $('stat-acc').textContent    = localData.maxAcc ? localData.maxAcc + '%' : '—';
+}
+
+// ── LEADERBOARD ──
+function renderLeaderboard() {
+  const list = $('lb-list');
+  list.innerHTML = '';
+  if (!localData.scores.length) {
+    list.innerHTML = '<p style="text-align:center;color:rgba(192,132,252,0.3);font-size:0.95rem;padding:12px">Aún no hay marcas. ¡Empieza a jugar!</p>';
+    return;
+  }
+  // sort by wpm desc
+  const sorted = [...localData.scores].sort((a,b) => b.wpm - a.wpm).slice(0, 10);
+  const medals = ['🥇','🥈','🥉'];
+  const posClasses = ['gold','silver','bronze'];
+
+  sorted.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'lb-row' + (i === 0 ? ' highlight' : '');
+    const modeLabels = { frases:'💬 Frases', palabras:'📝 Palabras', codigo:'💻 Código', emociones:'💜 Emociones' };
+    row.innerHTML = `
+      <span class="lb-pos ${posClasses[i]||''}">${medals[i]||('#'+(i+1))}</span>
+      <span class="lb-mode">${modeLabels[s.mode]||s.mode} · ${s.diff}s</span>
+      <span class="lb-acc">${s.acc}%</span>
+      <span class="lb-wpm">${s.wpm} PPM</span>
+      <span class="lb-date">${s.date}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
+// ── GIST SYNC ──
+async function loadFromGist() {
+  if (GIST_ID === 'TU_GIST_ID_AQUI') {
+    setSyncStatus('⚠ Configura el Gist para guardar récords online', 'err');
+    return;
+  }
+  setSyncStatus('Cargando récords…', '');
+  try {
+    const res  = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      headers: { Authorization: `token ${GIST_TOKEN}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    const data = await res.json();
+    const raw  = data.files?.[GIST_FILE]?.content;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      localData = { scores: parsed.scores||[], record: parsed.record||0, games: parsed.games||0, maxAcc: parsed.maxAcc||0 };
+      setSyncStatus('✓ Récords cargados 💜', 'ok');
+    }
+  } catch(e) {
+    setSyncStatus('Sin conexión — jugando en modo local', 'err');
+  }
+  updateStatsUI();
+  renderLeaderboard();
+}
+
+async function saveToGist() {
+  if (GIST_ID === 'TU_GIST_ID_AQUI') return;
+  setSyncStatus('Guardando…', '');
+  try {
+    const body = JSON.stringify({ files: { [GIST_FILE]: { content: JSON.stringify(localData) } } });
+    const res  = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers: { Authorization: `token ${GIST_TOKEN}`, 'Content-Type': 'application/json' },
+      body
+    });
+    if (res.ok) setSyncStatus('✓ Récord guardado para siempre ⭐', 'ok');
+    else setSyncStatus('Error al guardar — intenta de nuevo', 'err');
+  } catch(e) {
+    setSyncStatus('Sin conexión — récord local solamente', 'err');
+  }
+}
+
+function setSyncStatus(msg, cls) {
+  const el = $('sync-status');
+  el.textContent = msg;
+  el.className = 'sync-status ' + cls;
+}
+
+// ── INIT ──
+resetGame();
+loadFromGist();
 </script>
 </body>
 </html>
